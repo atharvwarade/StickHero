@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stickhhero.Main">
+   <children>
+      <ImageView fitHeight="400.0" fitWidth="500.0" pickOnBounds="true">
+         <image>
+            <Image url="@img/game_bg1.jpg" />
+         </image>
+      </ImageView>
+      <Text fill="WHITE" layoutX="99.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 50;" text="GAME OVER!" wrappingWidth="343.66363525390625" />
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="WHITE" height="122.0" layoutX="114.0" layoutY="99.0" stroke="BLACK" strokeType="INSIDE" width="272.0" />
+      <Text layoutX="232.0" layoutY="122.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SCORE" />
+      <Text layoutX="236.0" layoutY="148.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 20;" text="17" wrappingWidth="28.93756103515625" />
+      <Text layoutX="237.0" layoutY="185.0" strokeType="OUTSIDE" strokeWidth="0.0" text="BEST" />
+      <Text layoutX="239.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 20;" text="40" />
+      <Rectangle arcHeight="20.0" arcWidth="20.0" fill="#c9c9c9" height="54.0" layoutX="350.0" layoutY="285.0" stroke="BLACK" strokeType="INSIDE" width="56.0" />
+      <Rectangle arcHeight="20.0" arcWidth="20.0" fill="#c9c9c9" height="54.0" layoutX="99.0" layoutY="285.0" stroke="BLACK" strokeType="INSIDE" width="56.0" />
+      <ImageView fitHeight="42.0" fitWidth="45.0" layoutX="356.0" layoutY="291.0" onMouseClicked="#startGameScreen" pickOnBounds="true">
+         <image>
+            <Image url="@img/replay.jpg" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="42.0" fitWidth="45.0" layoutX="105.0" layoutY="291.0" onMouseClicked="#mainMenu" pickOnBounds="true">
+         <image>
+            <Image url="@img/home.jpg" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

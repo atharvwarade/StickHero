@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stickhhero.Main">
+   <children>
+      <ImageView fitHeight="400.0" fitWidth="500.0" pickOnBounds="true">
+         <image>
+            <Image url="@img/mainMenu_bg.jpg" />
+         </image></ImageView>
+      <Circle fill="RED" layoutX="250.0" layoutY="200.0" onMouseClicked="#startGameScreen" radius="54.0" stroke="BLACK" strokeType="INSIDE" />
+      <Text fill="WHITE" layoutX="213.0" layoutY="212.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold; -fx-font-size: 30;" text="PLAY" />
+      <Text fill="#26ff5c" layoutX="201.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold; -fx-font-size: 30;" text="STICK HERO" wrappingWidth="97.46014404296875" />
+      <Circle fill="WHITE" layoutX="45.0" layoutY="54.0" onMouseClicked="#musicChange" radius="20.0" stroke="BLACK" strokeType="INSIDE" />
+      <ImageView fitHeight="28.0" fitWidth="26.0" layoutX="32.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@img/sound.jpg" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>
