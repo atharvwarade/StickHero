@@ -13,13 +13,11 @@ import java.io.IOException;
 public class Main extends Application {
 
     private Stage stage;
-    private Player player;
+    private static Player player;
 
     @Override
     public void start(Stage s) throws Exception {
-        player = new Player();
         stage = s;
-        Player player = new Player();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/firstScreen.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root,500,400);
@@ -36,8 +34,8 @@ public class Main extends Application {
     public void startGameScreen(MouseEvent mouseEvent) throws IOException {
         Node temp = (Node)mouseEvent.getSource();
         stage = (Stage)temp.getScene().getWindow();
-        Game game = new Game(stage);
-        game.startGame(player);
+        Game controller = new Game(stage,player);
+        controller.startGameScene(player);
     }
 
     public void endGameScreen() {
@@ -45,6 +43,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        player = new Player();
         launch(args);
     }
 
