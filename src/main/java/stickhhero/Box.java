@@ -19,6 +19,12 @@ public class Box {
     private Timeline secondTimeline;
     private Timeline firstTimeline;
 
+    public static void copy(Rectangle temp, Rectangle main) {
+        temp.setWidth(main.getWidth());
+        temp.setLayoutX(main.getLayoutX());
+        temp.setLayoutY(main.getLayoutY());
+    }
+
     public boolean isSecondTranslated() {
         return secondTranslated;
     }
@@ -85,7 +91,6 @@ public class Box {
     public void translateSecondRectangle(Rectangle secondPlatform,double secondRectangleTranslate, Player player) {
         secondTimeline = new Timeline(
                 new KeyFrame(Duration.millis(10), event -> {
-                    //System.out.println("INITIALIZED");
                     this.translateSecondNow(secondPlatform,secondRectangleTranslate,player);
                 })
         );
@@ -96,8 +101,8 @@ public class Box {
 
     private void translateSecondNow(Rectangle secondPlatform, double secondRectangleTranslate, Player player) {
         if (player.isPlayerTranslated()) {
-            System.out.println("HUHU");
             secondTimeline.stop();
+            System.out.println("SECOND RECTANGLE TRANSLATING");
 //            translateTransition = new TranslateTransition();
 //            translateTransition.setNode(secondPlatform);
 //            translateTransition.setDuration(Duration.millis(1000));
@@ -117,6 +122,7 @@ public class Box {
         if (secondPlatform.getLayoutX() <= 101.0 - secondPlatform.getWidth()) {
             secondTimeline.stop();
             this.setSecondTranslated(true);
+            System.out.println("SECOND RECTANGLE TRANSLATED");
             return;
         }
         secondPlatform.setLayoutX(secondPlatform.getLayoutX() - 1.0);
@@ -136,6 +142,7 @@ public class Box {
 
     private void translateFirstNow(Rectangle firstPlatform, Box second, Player player) {
         if (player.isPlayerTranslated()) {
+            System.out.println("FIRST RECTANGLE TRANSLATING");
             firstTimeline.stop();
             //player.setPlayerTranslated(false);
             second.setSecondTranslated(false);
@@ -151,8 +158,8 @@ public class Box {
 
     private void startFirstTranslation(Rectangle firstPlatform,Player player) {
         if (firstPlatform.getLayoutX() <= -100.0) {
+            System.out.println("FIRST RECTANGLE TRANSLATED");
             firstTimeline.stop();
-
             this.setFirstTranslated(true);
             return;
         }
