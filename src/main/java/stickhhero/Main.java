@@ -1,5 +1,7 @@
 package stickhhero;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -8,6 +10,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+
 import java.io.IOException;
 
 public class Main extends Application {
@@ -24,6 +28,13 @@ public class Main extends Application {
         stage.setTitle("StickHero");
         stage.setScene(scene);
         stage.show();
+//        new Timeline(
+//                new KeyFrame(Duration.millis(20), event -> {
+//                    somefunction() // in this function at a later point the timeline will resume
+//                    timeline.pause()
+//                }
+//                )
+//        )
     }
 
     public void mainMenu(Stage s) {
