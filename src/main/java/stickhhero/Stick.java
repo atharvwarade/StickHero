@@ -29,6 +29,7 @@ public class Stick {
 
     public void setLine(Line line) {
         this.line = line;
+
     }
 
     public double getLineLength() {
@@ -48,7 +49,9 @@ public class Stick {
     }
 
     public void extendLine(Stage stage, Player player, Scene scene) {
-        this.setLineCoordinates(stage,player,scene);
+        System.out.println("EXTENDING LINE");
+        this.setLineLength(0.0);
+        this.setLineCoordinates();
         scene.setOnMousePressed(e -> {
             this.growStick(stage,player,scene);
         });
@@ -56,9 +59,10 @@ public class Stick {
         scene.setOnMouseReleased(e -> {
             timeline.stop();
             this.rotateStick(stage,player,scene);
-
         });
     }
+
+
 
     public Timeline getTimeline() {
         return timeline;
@@ -69,16 +73,45 @@ public class Stick {
     }
 
     private void rotateStick(Stage stage, Player player, Scene scene) {
-        Rotate rotate = new Rotate();
-        rotate.setPivotX(line.getStartX());
-        rotate.setPivotY(line.getStartY());
-        line.getTransforms().add(rotate);
-        rotate.setAngle(90);
-        //line.setEndX(line.getStartX() + this.lineLength);
-        this.setStickRotated(true);
+        System.out.println("STICK EXTENSION COMPLETED");
+//        Rotate rotate = new Rotate();
+//        rotate.setPivotX(line.getStartX());
+//        rotate.setPivotY(line.getStartY());
+//        line.getTransforms().add(rotate);
+//        rotate.setAngle(90);
+//        //line.setEndX(line.getStartX() + this.lineLength);
+//        this.setStickRotated(true);
+        timeline = new Timeline(
+                new KeyFrame(Duration.millis(10), event -> {
+                    this.rotateNow();
+                })
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
 
-    private void setLineCoordinates(Stage stage, Player player, Scene scene) {
+    private void rotateNow() {
+        if ((this.line.getEndX() >= this.line.getStartX() + this.getLineLength()) && (this.line.getEndY() >= 200.0)) {
+            System.out.println("STICK ROTATED");
+            System.out.println("Line length : "+(this.line.getEndX() - this.line.getStartX()));
+            System.out.println("Linelength : "+(this.getLineLength()));
+            timeline.stop();
+            this.setStickRotated(true);
+            return;
+        }
+        else if (this.line.getEndX() >= this.line.getStartX() + this.getLineLength()) {
+            this.line.setEndY(this.line.getEndY() + 1.0);
+        }
+        else if (this.line.getEndY() >= 200.0) {
+            this.line.setEndX(this.line.getEndX() + 1.0);
+        }
+        else {
+            this.line.setEndY(this.line.getEndY() + 1.0);
+            this.line.setEndX(this.line.getEndX() + 1.0);
+        }
+    }
+
+    public void setLineCoordinates() {
         line.setStartX(101.0);
         line.setStartY(200.0);
         line.setEndX(101.0);
