@@ -104,6 +104,7 @@ public class Player {
     }
     private void translateNow(Stage stage, Scene scene, Stick stick) {
         if (stick.isStickRotated()) {
+            System.out.println("PLLAYER TRANSITION STARTS");
             stick.setStickRotated(false);
             timeline.stop();
             timeline = new Timeline(
@@ -123,13 +124,16 @@ public class Player {
         if (count >= stick.getLineLength()) {
             timeline.stop();
             this.setPlayerTranslated(true);
-            System.out.println(this.playerSkin.getLayoutX());
+            System.out.println(stick.getLineLength());
+            System.out.println("PLAYER TRANSITION COMPLETED");
+            this.count = 0.0;
             return;
         }
         this.playerSkin.setLayoutX(this.playerSkin.getLayoutX() + 1.0);
     }
 
     public void getBack(Stick stick) {
+
         backTimeline = new Timeline(
                 new KeyFrame(Duration.millis(16), event -> {
                     getBackNow(stick);
@@ -142,6 +146,8 @@ public class Player {
     private void getBackNow(Stick stick) {
         if (this.isPlayerTranslated()) {
             backTimeline.stop();
+            System.out.println("BACK TRANSLATION STARTED");
+            this.setPlayerTranslated(false);
 //            translateTransition = new TranslateTransition();
 //            translateTransition.setNode(this.getPlayerSkin());
 //            translateTransition.setByX(-stick.getLineLength());
@@ -159,6 +165,9 @@ public class Player {
 
     private void startBackTranslation() {
         if (this.playerSkin.getLayoutX() <= 100.0 - this.playerSkin.getFitWidth()) {
+            System.out.println("BACK TRANSLATION COMPLETED");
+            backTimeline.stop();
+            this.setBackTranslated(true);
             return;
         }
         this.playerSkin.setLayoutX(this.playerSkin.getLayoutX()-1.0);
