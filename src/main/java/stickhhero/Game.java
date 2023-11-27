@@ -1,27 +1,16 @@
 package stickhhero;
 
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.RadioButton;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.IOException;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Game {
 
@@ -69,26 +58,31 @@ public class Game {
     }
 
     private void startGameLoop(Player player, Scene scene) {
-//        timeline = new Timeline(new KeyFrame(Duration.millis(16), event -> {
-//            stick.extendLine(stage,player,scene);
-//        })
-//        );
-//        timeline.setCycleCount(Timeline.INDEFINITE);
-//        timeline.play();
-        stick.extendLine(stage,player,scene);
-        System.out.println(stick.getLine().getEndX());
-        player.translateTimeline(stage,scene, stick);
-        double secondRectangleTranslate = (secondPlatform.getLayoutX() + secondPlatform.getWidth() - firstPlatform.getWidth() - firstPlatform.getLayoutX());
-        second.translateSecondRectangle(secondPlatform,secondRectangleTranslate,player);
-        first.translateFirstRectangle(firstPlatform,second,player);
-        firstPlatform.setFill(Color.rgb(0,0,0,0.5));
-        player.getBack(stick);
+        timeline = new Timeline(new KeyFrame(Duration.millis(10), event -> {
+            System.out.println("STARTING GAME");
+            stick.extendLine(stage,player,scene);
+            player.translateTimeline(stage,scene, stick);
+            double secondRectangleTranslate = (secondPlatform.getLayoutX() + secondPlatform.getWidth() - firstPlatform.getWidth() - firstPlatform.getLayoutX());
+            second.translateSecondRectangle(secondPlatform,secondRectangleTranslate,player);
+            first.translateFirstRectangle(firstPlatform,second,player);
+            player.getBack(stick);
+            createNewBoxTimeline(player);
+        })
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+//        stick.extendLine(stage,player,scene);
+//        player.translateTimeline(stage,scene, stick);
+//        double secondRectangleTranslate = (secondPlatform.getLayoutX() + secondPlatform.getWidth() - firstPlatform.getWidth() - firstPlatform.getLayoutX());
+//        second.translateSecondRectangle(secondPlatform,secondRectangleTranslate,player);
+//        first.translateFirstRectangle(firstPlatform,second,player);
+//        player.getBack(stick);
 //        Box temp = new Box();
 //        first = second;
 //        firstPlatform = secondPlatform;
 //        double secondLayoutX = firstPlatform.getLayoutX() + 1 + firstPlatform.getWidth() + (495 - (firstPlatform.getLayoutX() + 1 + firstPlatform.getWidth())) * random.nextDouble();
 //        double secondWidth = (secondLayoutX+1) + (495-secondLayoutX-1)*(random.nextDouble()) - (secondLayoutX);
-        //createNewBoxTimeline();
+//        createNewBoxTimeline(player);
         //firstPlatform.setFill(Color.rgb(0,0,0,0.5));
 
 //        double playerDistance = (line.getEndX() - playerSkin.getX());
@@ -96,31 +90,33 @@ public class Game {
 
     }
 
-    private void createNewBoxTimeline() {
+    private void createNewBoxTimeline(Player player) {
+        timeline.pause();
         newBoxTimeline = new Timeline(
                 new KeyFrame(Duration.millis(10), event -> {
-                    createNewBox();
+                    createNewBox(player);
                 })
         );
         newBoxTimeline.setCycleCount(Timeline.INDEFINITE);
         newBoxTimeline.play();
     }
 
-    private void createNewBox() {
-//        if (second.getTranslateTransition() == null) {
-//            return;
-//        }
-//        if (second.getTranslateTransition().getStatus() != Timeline.Status.RUNNING) {
-//            System.out.println("GAGA");
-//            Random random = new Random();
-//            newBoxTimeline.stop();
-//            Box temp = new Box();
-//            double secondLayoutX = secondPlatform.getLayoutX() + 1 + 100.0 + (495 - (secondPlatform.getLayoutX() + 1 + 100.0)) * random.nextDouble();
-//            double secondWidth = (secondLayoutX+1) + (495-secondLayoutX-1)*(random.nextDouble()) - (secondLayoutX);
-//            System.out.println(secondLayoutX);
-//            System.out.println(secondWidth);
-//            createPlatform(temp,firstPlatform,100.0,300.0,200.0);
-//        }
+    private void createNewBox(Player player) {
+        if (first.isFirstTranslated() & player.isBackTranslated() && second.isSecondTranslated()) {
+            newBoxTimeline.stop();
+            first.setFirstTranslated(false);
+            second.setSecondTranslated(false);
+            player.setBackTranslated(false);
+            Random random = new Random();
+            double secondLayoutX = secondPlatform.getLayoutX() + 25 + secondPlatform.getWidth() + (495 - (secondPlatform.getLayoutX() + 25 + secondPlatform.getWidth())) * random.nextDouble();
+            double secondWidth = (secondLayoutX+1) + (495-secondLayoutX-1)*(random.nextDouble()) - (secondLayoutX);
+            createPlatform(first,firstPlatform,secondWidth,secondLayoutX,200.0);
+            Rectangle temp = new Rectangle();
+            Box.copy(temp,secondPlatform);
+            Box.copy(secondPlatform,firstPlatform);
+            Box.copy(firstPlatform,temp);
+            timeline.play();
+        }
     }
 
     private void endGameScene() {
