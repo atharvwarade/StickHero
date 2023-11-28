@@ -27,6 +27,7 @@ public class Player {
         playerSkin.setLayoutX(50.0);
         playerSkin.setLayoutY(160.0);
         this.playerTranslated = false;
+        this.backTranslated = false;
     }
 
     public boolean isBackTranslated() {
@@ -93,20 +94,27 @@ public class Player {
         this.playerSkin = playerSkin;
     }
 
-    public void translateTimeline(Stage stage, Scene scene, Stick stick) {
+    public void translateTimeline(Stage stage, Scene scene, Stick stick, Box first, Box second) {
         timeline = new Timeline(
                 new KeyFrame(Duration.millis(10), event -> {
-                    this.translateNow(stage,scene,stick);
+                    this.translateNow(stage,scene,stick, first, second);
                 })
         );
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
-    private void translateNow(Stage stage, Scene scene, Stick stick) {
+    private void translateNow(Stage stage, Scene scene, Stick stick, Box first, Box second) {
         if (stick.isStickRotated()) {
+            timeline.stop();
+            if (first.getPlatform().getLayoutX() + first.getPlatform().getWidth() + stick.getLineLength() < second.getPlatform().getLayoutX()
+            || first.getPlatform().getLayoutX() + first.getPlatform().getWidth() + stick.getLineLength() > second.getPlatform().getLayoutX() + second.getPlatform().getWidth()) {
+                //System.out.println("GIR GAYA");
+                fallTranslation(stage, stick, first, second);
+                return;
+            }
             System.out.println("PLLAYER TRANSITION STARTS");
             stick.setStickRotated(false);
-            timeline.stop();
+
             timeline = new Timeline(
                     new KeyFrame(Duration.millis(10), event -> {
                         startTranslation(count,stick);
@@ -118,6 +126,41 @@ public class Player {
             //this.playerSkin.setTranslateX(stick.getLine().getEndX() - playerSkin.getX());
 
         }
+    }
+
+    private void fallTranslation(Stage stage,Stick stick, Box first, Box second) {
+        System.out.println("STARTING FALLING PROCEDURE");
+        timeline = new Timeline(
+                new KeyFrame(Duration.millis(10), event -> {
+                           startHorizontalFallTranslation(stage,stick,first,second);
+                           count+=1.0;
+                })
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    private void startHorizontalFallTranslation(Stage stage,Stick stick, Box first, Box second) {
+        if (count >= stick.getLineLength()) {
+            timeline.stop();
+            this.count=0.0;
+            System.out.println("FALLING HORIZONTAL COMPLETED");
+            timeline = new Timeline(
+                    new KeyFrame(Duration.millis(5), event -> {
+                        startVerticalFallTranslation(stage, stick);
+                    })
+            );
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.play();
+        }
+        this.playerSkin.setLayoutX(this.playerSkin.getLayoutX() + 1.0);
+    }
+
+    private void startVerticalFallTranslation(Stage stage,Stick stick) {
+        if (this.getPlayerSkin().getLayoutY() >= 600.0) {
+            stage.close();
+        }
+        this.getPlayerSkin().setLayoutY(this.getPlayerSkin().getLayoutY() + 1.0);
     }
 
     private void startTranslation(double count, Stick stick) {
@@ -135,7 +178,7 @@ public class Player {
     public void getBack(Stick stick) {
 
         backTimeline = new Timeline(
-                new KeyFrame(Duration.millis(16), event -> {
+                new KeyFrame(Duration.millis(10), event -> {
                     getBackNow(stick);
                 })
         );
