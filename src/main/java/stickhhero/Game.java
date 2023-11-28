@@ -15,8 +15,6 @@ import java.util.Random;
 public class Game {
 
     private Stage stage;
-    private Rectangle firstPlatform;
-    private Rectangle secondPlatform;
     private ImageView playerSkin;
     private Line line;
     private Stick stick;
@@ -31,8 +29,6 @@ public class Game {
     }
     public Game(Stage stage, Player player) {
         this.stage = stage;
-        this.firstPlatform = new Rectangle();
-        this.secondPlatform = new Rectangle();
         this.playerSkin = player.getPlayerSkin();
         this.line = new Line();
         this.stick = new Stick(this.line);
@@ -45,12 +41,12 @@ public class Game {
     public void startGameScene(Player player) {
         Scene scene = new Scene(anchorPane,500,400);
         Random random = new Random();
-        createPlatform(first,firstPlatform,100.0,0.0,200.0);
+        createPlatform(first,100.0,0.0,200.0);
         //double secondLayoutX = 101 + (490 - 101)*(random.nextDouble());
-        double secondLayoutX = firstPlatform.getLayoutX() + 1 + firstPlatform.getWidth() + (495 - (firstPlatform.getLayoutX() + 1 + firstPlatform.getWidth())) * random.nextDouble();
+        double secondLayoutX = first.getPlatform().getLayoutX() + 1 + first.getPlatform().getWidth() + (495 - (first.getPlatform().getLayoutX() + 1 + first.getPlatform().getWidth())) * random.nextDouble();
         double secondWidth = (secondLayoutX+1) + (495-secondLayoutX-1)*(random.nextDouble()) - (secondLayoutX);
-        createPlatform(second,secondPlatform,secondWidth,secondLayoutX,200.0);
-        anchorPane.getChildren().addAll(firstPlatform,secondPlatform,playerSkin);
+        createPlatform(second,secondWidth,secondLayoutX,200.0);
+        anchorPane.getChildren().addAll(first.getPlatform(),second.getPlatform(),playerSkin);
         anchorPane.getChildren().add(line);
         stage.setScene(scene);
         stage.show();
@@ -61,33 +57,15 @@ public class Game {
         timeline = new Timeline(new KeyFrame(Duration.millis(10), event -> {
             System.out.println("STARTING GAME");
             stick.extendLine(stage,player,scene);
-            player.translateTimeline(stage,scene, stick);
-            double secondRectangleTranslate = (secondPlatform.getLayoutX() + secondPlatform.getWidth() - firstPlatform.getWidth() - firstPlatform.getLayoutX());
-            second.translateSecondRectangle(secondPlatform,secondRectangleTranslate,player);
-            first.translateFirstRectangle(firstPlatform,second,player);
+            player.translateTimeline(stage,scene, stick, first, second);
+            second.translateSecondRectangle(player);
+            first.translateFirstRectangle(player);
             player.getBack(stick);
             createNewBoxTimeline(player);
         })
         );
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
-//        stick.extendLine(stage,player,scene);
-//        player.translateTimeline(stage,scene, stick);
-//        double secondRectangleTranslate = (secondPlatform.getLayoutX() + secondPlatform.getWidth() - firstPlatform.getWidth() - firstPlatform.getLayoutX());
-//        second.translateSecondRectangle(secondPlatform,secondRectangleTranslate,player);
-//        first.translateFirstRectangle(firstPlatform,second,player);
-//        player.getBack(stick);
-//        Box temp = new Box();
-//        first = second;
-//        firstPlatform = secondPlatform;
-//        double secondLayoutX = firstPlatform.getLayoutX() + 1 + firstPlatform.getWidth() + (495 - (firstPlatform.getLayoutX() + 1 + firstPlatform.getWidth())) * random.nextDouble();
-//        double secondWidth = (secondLayoutX+1) + (495-secondLayoutX-1)*(random.nextDouble()) - (secondLayoutX);
-//        createNewBoxTimeline(player);
-        //firstPlatform.setFill(Color.rgb(0,0,0,0.5));
-
-//        double playerDistance = (line.getEndX() - playerSkin.getX());
-//        playerSkin.setTranslateX(playerDistance);
-
     }
 
     private void createNewBoxTimeline(Player player) {
@@ -108,13 +86,13 @@ public class Game {
             second.setSecondTranslated(false);
             player.setBackTranslated(false);
             Random random = new Random();
-            double secondLayoutX = secondPlatform.getLayoutX() + 25 + secondPlatform.getWidth() + (495 - (secondPlatform.getLayoutX() + 25 + secondPlatform.getWidth())) * random.nextDouble();
+            double secondLayoutX = second.getPlatform().getLayoutX() + 25 + second.getPlatform().getWidth() + (495 - (second.getPlatform().getLayoutX() + 25 + second.getPlatform().getWidth())) * random.nextDouble();
             double secondWidth = (secondLayoutX+1) + (495-secondLayoutX-1)*(random.nextDouble()) - (secondLayoutX);
-            createPlatform(first,firstPlatform,secondWidth,secondLayoutX,200.0);
-            Rectangle temp = new Rectangle();
-            Box.copy(temp,secondPlatform);
-            Box.copy(secondPlatform,firstPlatform);
-            Box.copy(firstPlatform,temp);
+            createPlatform(first,secondWidth,secondLayoutX,200.0);
+            Box temp = new Box();
+            Box.copy(temp,second);
+            Box.copy(second,first);
+            Box.copy(first,temp);
             timeline.play();
         }
     }
@@ -123,23 +101,9 @@ public class Game {
         timeline.pause();
     }
 
-    public void createPlatform(Box box, Rectangle platform,double width, double layoutX,double layoutY) {
-        this.updateBox(box,width,layoutX,layoutY);
-        this.setRectangle(box,platform);
-    }
-
-
-    private void setRectangle(Box box, Rectangle platform) {
-        platform.setHeight(box.getHeight());
-        platform.setWidth(box.getWidth());
-        platform.setLayoutX(box.getLayoutX());
-        platform.setLayoutY(box.getLayoutY());
-    }
-
-    public void updateBox(Box box, double width, double layoutX, double layoutY) {
-        box.setWidth(width);
-        box.setLayoutX(layoutX);
-        box.setLayoutY(layoutY);
-
+    public void createPlatform(Box box,double width, double layoutX,double layoutY) {
+        box.getPlatform().setWidth(width);
+        box.getPlatform().setLayoutX(layoutX);
+        box.getPlatform().setLayoutY(layoutY);
     }
 }
