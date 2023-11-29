@@ -11,18 +11,52 @@ import javafx.util.Duration;
 public class Box {
     private final int height = 300;
     private boolean firstTranslated;
-    private double width;
-    private double layoutX;
-    private double layoutY;
+    private Rectangle platform;
 
     private boolean secondTranslated;
     private Timeline secondTimeline;
     private Timeline firstTimeline;
 
-    public static void copy(Rectangle temp, Rectangle main) {
-        temp.setWidth(main.getWidth());
-        temp.setLayoutX(main.getLayoutX());
-        temp.setLayoutY(main.getLayoutY());
+    public Timeline getSecondTimeline() {
+        return secondTimeline;
+    }
+
+    public void setSecondTimeline(Timeline secondTimeline) {
+        this.secondTimeline = secondTimeline;
+    }
+
+    public Timeline getFirstTimeline() {
+        return firstTimeline;
+    }
+
+    public void setFirstTimeline(Timeline firstTimeline) {
+        this.firstTimeline = firstTimeline;
+    }
+
+    public Rectangle getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Rectangle platform) {
+        this.platform = platform;
+    }
+
+    public Box() {
+        this.firstTranslated = false;
+        this.secondTranslated = false;
+        this.platform = new Rectangle();
+        this.platform.setHeight(height);
+    }
+
+    public static void copy(Box temp, Box main) {
+//        temp.setWidth(main.getWidth());
+//        temp.setLayoutX(main.getLayoutX());
+//        temp.setLayoutY(main.getLayoutY());
+        temp.getPlatform().setWidth(main.getPlatform().getWidth());
+        temp.getPlatform().setLayoutX(main.getPlatform().getLayoutX());
+        temp.getPlatform().setLayoutY(main.getPlatform().getLayoutY());
+        temp.setFirstTranslated(main.isFirstTranslated());
+        temp.setSecondTranslated(main.isSecondTranslated());
     }
 
     public boolean isSecondTranslated() {
@@ -33,22 +67,6 @@ public class Box {
         this.secondTranslated = secondTranslated;
     }
 
-    public double getLayoutX() {
-        return layoutX;
-    }
-
-    public void setLayoutX(double layoutX) {
-        this.layoutX = layoutX;
-    }
-
-    public double getLayoutY() {
-        return layoutY;
-    }
-
-    public void setLayoutY(double layoutY) {
-        this.layoutY = layoutY;
-    }
-
     public boolean isFirstTranslated() {
         return firstTranslated;
     }
@@ -57,22 +75,6 @@ public class Box {
         this.firstTranslated = firstTranslated;
     }
 
-    public Box() {
-        this.firstTranslated = false;
-        this.secondTranslated = false;
-    }
-    public Box(double width) {
-        this.width = width;
-    }
-
-//    public Rectangle getPlatform() {
-//        return platform;
-//    }
-//
-//    public void setPlatform(Rectangle box) {
-//        this.platform = box;
-//    }
-
 
 
 
@@ -80,18 +82,10 @@ public class Box {
         return height;
     }
 
-    public double getWidth() {
-        return width;
-    }
-
-    public void setWidth(double width) {
-        this.width = width;
-    }
-
-    public void translateSecondRectangle(Rectangle secondPlatform,double secondRectangleTranslate, Player player) {
+    public void translateSecondRectangle(Player player) {
         secondTimeline = new Timeline(
                 new KeyFrame(Duration.millis(10), event -> {
-                    this.translateSecondNow(secondPlatform,secondRectangleTranslate,player);
+                    this.translateSecondNow(player);
                 })
         );
         secondTimeline.setCycleCount(Timeline.INDEFINITE);
@@ -99,7 +93,7 @@ public class Box {
     }
 
 
-    private void translateSecondNow(Rectangle secondPlatform, double secondRectangleTranslate, Player player) {
+    private void translateSecondNow(Player player) {
         if (player.isPlayerTranslated()) {
             secondTimeline.stop();
             System.out.println("SECOND RECTANGLE TRANSLATING");
@@ -110,7 +104,7 @@ public class Box {
 //            translateTransition.play();
             secondTimeline = new Timeline(
                     new KeyFrame(Duration.millis(10), event -> {
-                        this.startSecondTranslation(secondPlatform);
+                        this.startSecondTranslation(this.getPlatform());
                     })
             );
             secondTimeline.setCycleCount(Timeline.INDEFINITE);
@@ -129,10 +123,10 @@ public class Box {
     }
 
 
-    public void translateFirstRectangle(Rectangle firstPlatform, Box second, Player player) {
+    public void translateFirstRectangle(Player player) {
         firstTimeline = new Timeline(
                 new KeyFrame(Duration.millis(10), event -> {
-                    this.translateFirstNow(firstPlatform,second, player);
+                    this.translateFirstNow(this.getPlatform(), player);
                     //this.startFirstTranslation(firstPlatform, player);
                 })
         );
@@ -140,14 +134,13 @@ public class Box {
         firstTimeline.play();
     }
 
-    private void translateFirstNow(Rectangle firstPlatform, Box second, Player player) {
+    private void translateFirstNow(Rectangle firstPlatform, Player player) {
         if (player.isPlayerTranslated()) {
             System.out.println("FIRST RECTANGLE TRANSLATING");
             firstTimeline.stop();
             //player.setPlayerTranslated(false);
-            second.setSecondTranslated(false);
             firstTimeline = new Timeline(
-                    new KeyFrame(Duration.millis(10), event -> {
+                    new KeyFrame(Duration.millis(1), event -> {
                         startFirstTranslation(firstPlatform, player);
                     })
             );
@@ -157,7 +150,7 @@ public class Box {
     }
 
     private void startFirstTranslation(Rectangle firstPlatform,Player player) {
-        if (firstPlatform.getLayoutX() <= -100.0) {
+        if (firstPlatform.getLayoutX() <= -400.0) {
             System.out.println("FIRST RECTANGLE TRANSLATED");
             firstTimeline.stop();
             this.setFirstTranslated(true);
