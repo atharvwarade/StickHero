@@ -9,6 +9,8 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
+
 public class Player {
 
     private int highScore;
@@ -28,6 +30,13 @@ public class Player {
         playerSkin.setLayoutY(160.0);
         this.playerTranslated = false;
         this.backTranslated = false;
+    }
+
+    public void setCoordinates() {
+        playerSkin.setFitWidth(50.0);
+        playerSkin.setFitHeight(40.0);
+        playerSkin.setLayoutX(50.0);
+        playerSkin.setLayoutY(160.0);
     }
 
     public boolean isBackTranslated() {
@@ -94,22 +103,23 @@ public class Player {
         this.playerSkin = playerSkin;
     }
 
-    public void translateTimeline(Stage stage, Scene scene, Stick stick, Box first, Box second) {
+    public void translateTimeline(Stage stage, Scene scene, Stick stick, Box first, Box second, Game controller) {
         timeline = new Timeline(
                 new KeyFrame(Duration.millis(10), event -> {
-                    this.translateNow(stage,scene,stick, first, second);
+                    this.translateNow(stage,scene,stick, first, second, controller);
                 })
         );
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
-    private void translateNow(Stage stage, Scene scene, Stick stick, Box first, Box second) {
+    private void translateNow(Stage stage, Scene scene, Stick stick, Box first, Box second, Game controller) {
         if (stick.isStickRotated()) {
             timeline.stop();
+            System.out.println(second.getPlatform().getLayoutX() - stick.getLine().getStartX());
             if (first.getPlatform().getLayoutX() + first.getPlatform().getWidth() + stick.getLineLength() < second.getPlatform().getLayoutX()
             || first.getPlatform().getLayoutX() + first.getPlatform().getWidth() + stick.getLineLength() > second.getPlatform().getLayoutX() + second.getPlatform().getWidth()) {
                 //System.out.println("GIR GAYA");
-                fallTranslation(stage, stick, first, second);
+                fallTranslation(stage, stick, first, second, controller);
                 return;
             }
             System.out.println("PLLAYER TRANSITION STARTS");
@@ -117,7 +127,7 @@ public class Player {
 
             timeline = new Timeline(
                     new KeyFrame(Duration.millis(10), event -> {
-                        startTranslation(count,stick);
+                        startTranslation(count,stick, controller);
                         count = count + 1.0;
                     })
             );
@@ -128,11 +138,11 @@ public class Player {
         }
     }
 
-    private void fallTranslation(Stage stage,Stick stick, Box first, Box second) {
+    private void fallTranslation(Stage stage, Stick stick, Box first, Box second, Game controller) {
         System.out.println("STARTING FALLING PROCEDURE");
         timeline = new Timeline(
                 new KeyFrame(Duration.millis(10), event -> {
-                           startHorizontalFallTranslation(stage,stick,first,second);
+                           startHorizontalFallTranslation(stage,stick, controller);
                            count+=1.0;
                 })
         );
@@ -140,14 +150,18 @@ public class Player {
         timeline.play();
     }
 
-    private void startHorizontalFallTranslation(Stage stage,Stick stick, Box first, Box second) {
+    private void startHorizontalFallTranslation(Stage stage, Stick stick, Game controller) {
         if (count >= stick.getLineLength()) {
             timeline.stop();
             this.count=0.0;
             System.out.println("FALLING HORIZONTAL COMPLETED");
             timeline = new Timeline(
                     new KeyFrame(Duration.millis(5), event -> {
-                        startVerticalFallTranslation(stage, stick);
+                        try {
+                            startVerticalFallTranslation(stage, stick, controller);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     })
             );
             timeline.setCycleCount(Timeline.INDEFINITE);
@@ -156,17 +170,19 @@ public class Player {
         this.playerSkin.setLayoutX(this.playerSkin.getLayoutX() + 1.0);
     }
 
-    private void startVerticalFallTranslation(Stage stage,Stick stick) {
+    private void startVerticalFallTranslation(Stage stage, Stick stick, Game controller) throws IOException {
         if (this.getPlayerSkin().getLayoutY() >= 600.0) {
-            stage.close();
+            controller.endGameScene(this);
+            return;
         }
         this.getPlayerSkin().setLayoutY(this.getPlayerSkin().getLayoutY() + 1.0);
     }
 
-    private void startTranslation(double count, Stick stick) {
+    private void startTranslation(double count, Stick stick, Game controller) {
         if (count >= stick.getLineLength()) {
             timeline.stop();
             this.setPlayerTranslated(true);
+            stick.setLineCoordinates();
             System.out.println(stick.getLineLength());
             System.out.println("PLAYER TRANSITION COMPLETED");
             this.count = 0.0;
