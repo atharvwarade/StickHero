@@ -1,11 +1,9 @@
 package stickhhero;
 
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.shape.Line;
-import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -15,13 +13,30 @@ public class Stick {
     private double lineLength;
     private Timeline timeline;
     private boolean stickRotated;
+    private boolean stickExtended;
+    private Timeline rotateTimeline;
 
     public Stick(Line line) {
         this.line = line;
         lineLength = 0;
+        this.line.setStrokeWidth(2.0);
     }
 
+    public Timeline getRotateTimeline() {
+        return rotateTimeline;
+    }
 
+    public void setRotateTimeline(Timeline rotateTimeline) {
+        this.rotateTimeline = rotateTimeline;
+    }
+
+    public boolean isStickExtended() {
+        return stickExtended;
+    }
+
+    public void setStickExtended(boolean stickExtended) {
+        this.stickExtended = stickExtended;
+    }
 
     public Line getLine() {
         return line;
@@ -48,14 +63,11 @@ public class Stick {
         this.stickRotated = stickRotated;
     }
 
-    public void extendLine(Stage stage, Player player, Scene scene) {
-        System.out.println("EXTENDING LINE");
-        this.setLineLength(0.0);
-        this.setLineCoordinates();
+    public void extendLine(Stage stage, Player player, Scene scene, Box first, Box second) {
+        this.stickExtended = false;
         scene.setOnMousePressed(e -> {
             this.growStick(stage,player,scene);
         });
-
         scene.setOnMouseReleased(e -> {
             timeline.stop();
             this.rotateStick(stage,player,scene);
@@ -73,6 +85,11 @@ public class Stick {
     }
 
     private void rotateStick(Stage stage, Player player, Scene scene) {
+        if (this.stickExtended) {
+            return;
+        }
+        //timeline.setOnFinished(p ->this.stickExtended = true);
+        this.stickExtended = true;
         System.out.println("STICK EXTENSION COMPLETED");
 //        Rotate rotate = new Rotate();
 //        rotate.setPivotX(line.getStartX());
@@ -81,21 +98,21 @@ public class Stick {
 //        rotate.setAngle(90);
 //        //line.setEndX(line.getStartX() + this.lineLength);
 //        this.setStickRotated(true);
-        timeline = new Timeline(
+        rotateTimeline = new Timeline(
                 new KeyFrame(Duration.millis(10), event -> {
                     this.rotateNow();
                 })
         );
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+        rotateTimeline.setCycleCount(Timeline.INDEFINITE);
+        rotateTimeline.play();
     }
 
     private void rotateNow() {
         if ((this.line.getEndX() >= this.line.getStartX() + this.getLineLength()) && (this.line.getEndY() >= 200.0)) {
+            rotateTimeline.stop();
             System.out.println("STICK ROTATED");
             System.out.println("Line length : "+(this.line.getEndX() - this.line.getStartX()));
             System.out.println("Linelength : "+(this.getLineLength()));
-            timeline.stop();
             this.setStickRotated(true);
             return;
         }
@@ -119,6 +136,13 @@ public class Stick {
     }
 
     private void growStick(Stage stage, Player player, Scene scene) {
+        if (this.isStickExtended()) {
+            return;
+        }
+        System.out.println("EXTENDING LINE");
+        this.setLineLength(0.0);
+        this.setLineCoordinates();
+        System.out.println("PAPAPA");
          timeline = new Timeline(
                 new KeyFrame(Duration.millis(10), e -> {
                     lineLength+=1.0;
