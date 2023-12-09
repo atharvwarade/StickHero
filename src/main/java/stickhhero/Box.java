@@ -82,6 +82,15 @@ public class Box {
         return height;
     }
 
+    public static void translate(Box box, String type, Player player) {
+        if (type.equals("first")) {
+            box.translateFirstRectangle(player);
+        }
+        else if (type.equals("second")) {
+            box.translateSecondRectangle(player);
+        }
+    }
+
     public void translateSecondRectangle(Player player) {
         secondTimeline = new Timeline(
                 new KeyFrame(Duration.millis(10), event -> {
