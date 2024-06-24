@@ -1,7 +1,3 @@
-Here's a sample README for your StickHero game repository:
-
----
-
 # StickHero Game
 
 StickHero is a simple yet addictive game where you control a character who needs to cross platforms using a stick. The stick's length can be adjusted to ensure it spans the gap between two platforms. The challenge is to measure the length correctly to avoid falling.
